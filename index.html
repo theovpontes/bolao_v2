@@ -2,16 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<!-- ============================================================
-     SUAS CHAVES — preencha UMA vez (Supabase > Project Settings > API)
-     "Project URL" -> SUPABASE_URL   |   "anon public" -> SUPABASE_ANON_KEY
-     ============================================================ -->
 <script>
- const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
+  // ===== COLE SUA CHAVE ANON ABAIXO (a URL já está certa). Não mexa em mais nada. =====
+const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
+
 </script>
-<!-- ↓↓↓ DAQUI PRA BAIXO É O CÓDIGO. Numa próxima atualização, é só apagar
-        tudo abaixo desta linha e colar a versão nova. As 2 linhas acima ficam. ↓↓↓ -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Bolão da Copa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -171,13 +167,8 @@ th, td { padding: 9px; border-bottom: 1px solid var(--borda); text-align: left; 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ============================================================
-   As chaves ficam no TOPO do arquivo (procure SUPABASE_URL lá em cima).
-   Não precisa mexer aqui.
-   ============================================================ */
-const SUPABASE_URL      = window.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
-const EMAIL_DOMAIN      = "@bolao.local";
+/* As chaves ficam no TOPO do arquivo (linha 5 e 6). Não precisa mexer aqui. */
+const EMAIL_DOMAIN = "@bolao.local";
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
