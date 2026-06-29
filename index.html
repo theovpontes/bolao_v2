@@ -5,7 +5,9 @@
 <!-- ============================================================
 const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
+const EMAIL_DOMAIN      = "@bolao.local"; // login é por usuário; isto é só um "e-mail interno". Não precisa mexer.
 
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
      ============================================================ -->
 <script>
