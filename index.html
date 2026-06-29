@@ -2,6 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
+<!-- ============================================================
+const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
+
+
+     ============================================================ -->
+<script>
+  window.SUPABASE_URL      = "https://SEU-PROJETO.supabase.co";
+  window.SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_PUBLICA";
+</script>
+<!-- ↓↓↓ DAQUI PRA BAIXO É O CÓDIGO. Numa próxima atualização, é só apagar
+        tudo abaixo desta linha e colar a versão nova. As 2 linhas acima ficam. ↓↓↓ -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Bolão da Copa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -123,31 +135,57 @@ th, td { padding: 9px; border-bottom: 1px solid var(--borda); text-align: left; 
 .regras-txt { white-space: pre-wrap; font-size: 14px; line-height: 1.7; color: var(--txt); }
 .win-sel { margin-top: 8px; font-size: 12px; color: var(--txt2); display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
 .win-sel button { padding: 5px 10px; font-size: 12px; }
+/* ===== chaveamento ===== */
+.chave-wrap { overflow-x: auto; padding-bottom: 14px; -webkit-overflow-scrolling: touch; }
+.chave { display: flex; gap: 14px; min-width: max-content; align-items: stretch; padding: 4px; }
+.chave-col { display: flex; flex-direction: column; justify-content: space-around; gap: 10px; min-width: 158px; }
+.chave-col h4 { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--txt2); margin: 0 0 2px; text-align: center; }
+.br-card { background: var(--card); border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; box-shadow: var(--sombra); }
+.br-card.br-final { border-color: var(--amarelo); }
+.br-team { display: flex; align-items: center; gap: 6px; padding: 8px 10px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--borda); }
+.br-team:last-child { border-bottom: 0; }
+.br-team.win { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+.br-team.tbd { color: var(--txt2); font-style: italic; font-weight: 400; }
+.br-team .sc { margin-left: auto; font-weight: 800; }
+.br-camp { background: linear-gradient(135deg, color-mix(in srgb, var(--amarelo) 22%, transparent), transparent); border: 1px solid var(--amarelo); border-radius: 10px; padding: 12px; text-align: center; font-weight: 800; color: var(--amarelo); display: flex; align-items: center; justify-content: center; gap: 6px; }
+/* ===== prorrogação / pênaltis ===== */
+.extra-box { margin-top: 10px; border-top: 1px dashed var(--borda2); padding-top: 10px; }
+.extra-q { font-size: 12px; color: var(--txt2); font-weight: 700; margin: 6px 0 5px; }
+.opts { display: flex; gap: 6px; flex-wrap: wrap; }
+.opt { flex: 1; min-width: 64px; padding: 8px 6px; background: color-mix(in srgb, var(--txt) 6%, transparent); border: 1px solid var(--borda2); border-radius: 9px; color: var(--txt); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; }
+.opt.on { background: var(--ok); color: #04140d; border-color: var(--ok); }
+.opt.lock { opacity: .55; cursor: default; }
+.hint { font-size: 11px; color: var(--txt2); font-style: italic; margin-top: 6px; }
+/* ===== diversos ===== */
+.subtabs { display: flex; gap: 6px; margin: 4px 0 12px; }
+.subtabs .chip { cursor: pointer; }
+.voltar { background: var(--card2); border: 1px solid var(--borda2); color: var(--txt); font-weight: 700; padding: 7px 12px; border-radius: 9px; font-size: 13px; cursor: pointer; margin-bottom: 12px; }
+.badge-val { font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 6px; text-transform: uppercase; }
+.badge-pend { background: color-mix(in srgb, var(--amarelo) 18%, transparent); color: var(--amarelo); }
+.badge-ok { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+.name-link { cursor: pointer; }
+.name-link:hover { color: var(--aco); }
 </style>
 </head>
 <body>
 <div id="app"><div class="vazio">Carregando…</div></div>
 <div class="flash" id="flash"></div>
 
-<!-- Biblioteca oficial do Supabase (roda no navegador) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============================================================
-   >>>>>>  PREENCHA ESTES DOIS VALORES  <<<<<<
-   Pegue no painel do Supabase em: Project Settings > API
-   - "Project URL"            -> SUPABASE_URL
-   - "anon public" (a chave PÚBLICA, nunca a service_role!) -> SUPABASE_ANON_KEY
+   As chaves ficam no TOPO do arquivo (procure SUPABASE_URL lá em cima).
+   Não precisa mexer aqui.
    ============================================================ */
-const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
-
-const EMAIL_DOMAIN      = "@bolao.local"; // login é por usuário; isto é só um "e-mail interno". Não precisa mexer.
+const SUPABASE_URL      = window.SUPABASE_URL;
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+const EMAIL_DOMAIN      = "@bolao.local";
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ===== estado ===== */
-const S = { auth:null, me:null, matches:[], preds:[], users:[], specials:[], settings:{},
-            tab:'palpites', atab:'resultados', grupo:'todos', revGrupo:'todos', open:{},
+const S = { auth:null, me:null, matches:[], preds:[], users:[], specials:[], validations:[], settings:{},
+            tab:'palpites', atab:'resultados', grupo:'todos', soPend:true, verPessoa:null,
             authMode:'login', authErr:null, busy:false };
 
 /* ===== bandeiras ===== */
@@ -166,7 +204,7 @@ function flag(team, h=16){
   return `<img class="flag" src="https://flagcdn.com/w80/${code}.png" alt="" loading="lazy" style="width:${w}px;height:${h}px" onerror="this.style.display='none'">`;
 }
 
-/* ===== datas (fuso de Brasília) ===== */
+/* ===== datas ===== */
 const TZ = "America/Sao_Paulo";
 const fmtData = iso => {
   const d = new Date(iso);
@@ -176,40 +214,68 @@ const fmtData = iso => {
 };
 const fmtHora = iso => new Intl.DateTimeFormat("pt-BR",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:TZ}).format(new Date(iso));
 
-/* ===== pontuação (igual ao original) ===== */
-const outcome = (h,a)=> h>a?"H":h<a?"A":"D";
+/* ===== utilidades ===== */
+const norm = s => (s||'').trim().toLowerCase();
 function isLocked(iso){ return Date.now() >= new Date(iso).getTime(); }
-function pointsForMatch(m,p){
-  if(!p || m.result_home==null || m.result_away==null) return 0;
+function isKO(m){ return !m.group_name; }
+function lateDeadline(){
+  const s = S.settings.late_deadline; if(!s) return null;
+  let t = String(s).trim().replace(' ','T'); if(/[+-]\d\d$/.test(t)) t += ':00';
+  const d = new Date(t); return isNaN(d) ? null : d;
+}
+function lateOpen(m){ const dl=lateDeadline(); return !!(m.late_window && dl && Date.now() < dl.getTime()); }
+function enterable(m){ return (!isLocked(m.kickoff_at)) || lateOpen(m); }
+function myPred(id){ return S.preds.find(p=>p.user_id===S.me.id && p.match_id===id); }
+function temPalpite90(p){ return !!(p && p.pred_home!=null && p.pred_away!=null); }
+function isValidated(uid,mid){ return S.validations.some(v=>v.user_id===uid && v.match_id===mid); }
+function toLocalInput(d){ if(!d) return ''; const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+
+/* ===== pontuação ===== */
+const outcome = (h,a)=> h>a?"H":h<a?"A":"D";
+function pts90(m,p){
+  if(!p || m.result_home==null || m.result_away==null || p.pred_home==null || p.pred_away==null) return 0;
   if(p.pred_home===m.result_home && p.pred_away===m.result_away) return 3;
   if(outcome(p.pred_home,p.pred_away)===outcome(m.result_home,m.result_away)) return 1;
   return 0;
 }
+function ptsExtra(m,p){
+  let x=0;
+  if(m.et_outcome && p && p.pred_et && norm(p.pred_et)===norm(m.et_outcome)) x+=1;
+  if(m.pen_winner && p && p.pred_pen && norm(p.pred_pen)===norm(m.pen_winner)) x+=1;
+  return x;
+}
+function counts(m,p){
+  if(!p) return 0;
+  if(m.late_window && !isValidated(p.user_id,m.id)) return 0;
+  return pts90(m,p)+ptsExtra(m,p);
+}
 function specialLocked(matches){
-  const first = [...matches].sort((a,b)=>new Date(a.kickoff_at)-new Date(b.kickoff_at))[0];
+  const first=[...matches].sort((a,b)=>new Date(a.kickoff_at)-new Date(b.kickoff_at))[0];
   return first ? isLocked(first.kickoff_at) : false;
 }
-function pointsForSpecial(sp, champ, scorer){
+function pointsForSpecial(sp,champ,scorer){
   let p=0;
-  if(champ && sp?.champion?.trim().toLowerCase()===champ.trim().toLowerCase()) p+=10;
-  if(scorer && sp?.top_scorer?.trim().toLowerCase()===scorer.trim().toLowerCase()) p+=10;
+  if(champ && sp && norm(sp.champion)===norm(champ)) p+=10;
+  if(scorer && sp && norm(sp.top_scorer)===norm(scorer)) p+=10;
   return p;
 }
 function buildRanking(){
-  const champ = S.settings.champion||null, scorer = S.settings.top_scorer||null;
-  const rows = S.users.map(u=>{
-    const mine = S.preds.filter(p=>p.user_id===u.id);
-    const matchPoints = S.matches.reduce((s,m)=> s+pointsForMatch(m, mine.find(p=>p.match_id===m.id)),0);
-    const exact = S.matches.filter(m=>{const p=mine.find(x=>x.match_id===m.id); return p && m.result_home!=null && m.result_away!=null && p.pred_home===m.result_home && p.pred_away===m.result_away;}).length;
-    const hits  = S.matches.filter(m=>{const p=mine.find(x=>x.match_id===m.id); return p && m.result_home!=null && m.result_away!=null && outcome(p.pred_home,p.pred_away)===outcome(m.result_home,m.result_away);}).length;
-    const sp = S.specials.find(s=>s.user_id===u.id);
-    const specialPoints = pointsForSpecial(sp, champ, scorer);
-    return { userId:u.id, username:u.username, total:matchPoints+specialPoints, matchPoints, specialPoints, exactScores:exact, outcomeHits:hits };
-  });
-  return rows.sort((a,b)=> b.total-a.total || b.exactScores-a.exactScores || b.outcomeHits-a.outcomeHits || a.username.localeCompare(b.username));
+  const champ=S.settings.champion||null, scorer=S.settings.top_scorer||null;
+  return S.users.map(u=>{
+    const mine=S.preds.filter(p=>p.user_id===u.id);
+    let matchPoints=0, exact=0;
+    for(const m of S.matches){
+      const p=mine.find(x=>x.match_id===m.id);
+      matchPoints+=counts(m,p);
+      if(p && m.result_home!=null && p.pred_home===m.result_home && p.pred_away===m.result_away && !(m.late_window && !isValidated(u.id,m.id))) exact++;
+    }
+    const sp=S.specials.find(s=>s.user_id===u.id);
+    const specialPoints=pointsForSpecial(sp,champ,scorer);
+    return {userId:u.id,username:u.username,total:matchPoints+specialPoints,matchPoints,specialPoints,exactScores:exact};
+  }).sort((a,b)=> b.total-a.total || b.exactScores-a.exactScores || (a.username||'').localeCompare(b.username||''));
 }
 
-/* ===== avanço automático do chaveamento (testado) ===== */
+/* ===== avanço automático do chaveamento ===== */
 function winnerOf(m){
   if(!m) return null;
   if(m.winner_team) return m.winner_team;
@@ -219,21 +285,16 @@ function winnerOf(m){
   return null;
 }
 function loserOf(m){ const w=winnerOf(m); if(!w) return null; return w===m.home_team?m.away_team:m.home_team; }
-function resolveSource(src, byNo){
-  if(!src) return null;
-  const t=src[0], no=parseInt(src.slice(1),10), ref=byNo[no]; if(!ref) return null;
-  return t==="W"?winnerOf(ref): t==="L"?loserOf(ref): null;
-}
-// devolve [{id, home_team, away_team}] das partidas cujo time mudou
+function resolveSource(src,byNo){ if(!src) return null; const t=src[0],no=parseInt(src.slice(1),10),ref=byNo[no]; if(!ref) return null; return t==="W"?winnerOf(ref):t==="L"?loserOf(ref):null; }
 function bracketChanges(){
   const byNo={}; S.matches.forEach(m=>{ if(m.match_no!=null) byNo[m.match_no]=m; });
-  const alvo = S.matches.filter(m=>m.home_source||m.away_source).sort((a,b)=>a.match_no-b.match_no);
+  const alvo=S.matches.filter(m=>m.home_source||m.away_source).sort((a,b)=>a.match_no-b.match_no);
   const out=[];
   for(const m of alvo){
-    const nh = m.home_source ? resolveSource(m.home_source,byNo) : m.home_team;
-    const na = m.away_source ? resolveSource(m.away_source,byNo) : m.away_team;
-    const hf = nh ?? m.home_team, af = na ?? m.away_team;
-    if(hf!==m.home_team || af!==m.away_team){ m.home_team=hf; m.away_team=af; out.push({id:m.id, home_team:hf, away_team:af}); }
+    const nh=m.home_source?resolveSource(m.home_source,byNo):m.home_team;
+    const na=m.away_source?resolveSource(m.away_source,byNo):m.away_team;
+    const hf=nh??m.home_team, af=na??m.away_team;
+    if(hf!==m.home_team||af!==m.away_team){ m.home_team=hf; m.away_team=af; out.push({id:m.id,home_team:hf,away_team:af}); }
   }
   return out;
 }
@@ -243,193 +304,198 @@ let flashT=null;
 function flashMsg(msg){ const el=document.getElementById('flash'); el.textContent=msg; el.classList.add('show'); clearTimeout(flashT); flashT=setTimeout(()=>el.classList.remove('show'),1700); }
 
 /* ===== dados ===== */
-// Busca TODAS as linhas em páginas de 1000 (o Supabase devolve no máx. 1000 por vez).
-// Sem isto, palpites acima de 1000 não carregam e parecem "sumidos".
 async function fetchAll(table, cols='*'){
   const tam=1000; let de=0, tudo=[];
   while(true){
     const { data, error } = await sb.from(table).select(cols).range(de, de+tam-1);
     if(error){ console.error('Erro lendo '+table, error); break; }
     tudo = tudo.concat(data||[]);
-    if(!data || data.length < tam) break;   // última página
+    if(!data || data.length < tam) break;
     de += tam;
   }
   return tudo;
 }
 async function loadAll(){
-  const [mt, pr, us, sp, st] = await Promise.all([
+  const [mt, pr, us, sp, va, st] = await Promise.all([
     sb.from('matches').select('*').order('kickoff_at'),
     fetchAll('predictions'),
     fetchAll('users','id,username,role'),
     fetchAll('special_predictions'),
+    fetchAll('validations'),
     sb.from('settings').select('*'),
   ]);
-  S.matches = mt.data||[]; S.preds = pr||[]; S.users = us||[]; S.specials = sp||[];
-  S.users.sort((a,b)=> (a.username||'').localeCompare(b.username||''));
-  S.settings = {}; (st.data||[]).forEach(r=> S.settings[r.key]=r.value);
+  S.matches=mt.data||[]; S.preds=pr||[]; S.users=us||[]; S.specials=sp||[]; S.validations=va||[];
+  S.users.sort((a,b)=>(a.username||'').localeCompare(b.username||''));
+  S.settings={}; (st.data||[]).forEach(r=> S.settings[r.key]=r.value);
 }
-
-/* ===== auth ===== */
 async function refreshMe(){
   if(!S.auth){ S.me=null; return; }
   const { data } = await sb.from('users').select('id,username,role').eq('id', S.auth.id).maybeSingle();
   S.me = data || { id:S.auth.id, username:(S.auth.email||'').split('@')[0], role:'user' };
 }
 
+/* ===== ações ===== */
 const App = {
-  /* tema */
   toggleTheme(){ const cur=document.documentElement.getAttribute('data-theme'); const next=cur==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',next); try{localStorage.setItem('bolao-theme',next);}catch(e){} render(); },
-  /* navegação */
-  setTab(t){ S.tab=t; render(); },
-  setATab(t){ S.atab=t; render(); },
+  setTab(t){ S.tab=t; S.verPessoa=null; render(); },
+  setATab(t){ S.atab=t; S.verPessoa=null; render(); },
   setGrupo(g){ S.grupo=g; render(); },
-  setRevGrupo(g){ S.revGrupo=g; render(); },
-  toggleAcc(id){ S.open[id]=!S.open[id]; render(); },
+  setPend(v){ S.soPend=v; render(); },
+  verPessoa(id){ S.verPessoa=id; render(); },
   setAuthMode(m){ S.authMode=m; S.authErr=null; render(); },
 
   async login(){
-    const u=document.getElementById('f-user').value.trim().toLowerCase();
-    const p=document.getElementById('f-pass').value;
+    const u=document.getElementById('f-user').value.trim().toLowerCase(), p=document.getElementById('f-pass').value;
     if(u.length<3||p.length<4){ S.authErr="Usuário ou senha inválidos"; return render(); }
     S.busy=true; render();
     const { error } = await sb.auth.signInWithPassword({ email:u+EMAIL_DOMAIN, password:p });
-    S.busy=false;
-    if(error){ S.authErr="Usuário ou senha inválidos"; render(); }
+    S.busy=false; if(error){ S.authErr="Usuário ou senha inválidos"; render(); }
   },
   async registrar(){
-    const u=document.getElementById('f-user').value.trim().toLowerCase();
-    const p=document.getElementById('f-pass').value;
+    const u=document.getElementById('f-user').value.trim().toLowerCase(), p=document.getElementById('f-pass').value;
     if(!/^[a-z0-9_.-]{3,30}$/.test(u)){ S.authErr="Use 3+ caracteres: letras, números, _ . -"; return render(); }
     if(p.length<4){ S.authErr="Senha de pelo menos 4 caracteres"; return render(); }
     S.busy=true; render();
     const { error } = await sb.auth.signUp({ email:u+EMAIL_DOMAIN, password:p, options:{ data:{ username:u } } });
-    S.busy=false;
-    if(error){ S.authErr = /already/i.test(error.message)?"Esse usuário já existe":error.message; render(); }
+    S.busy=false; if(error){ S.authErr=/already/i.test(error.message)?"Esse usuário já existe":error.message; render(); }
   },
   async logout(){ await sb.auth.signOut(); },
 
-  /* palpites */
-  async savePred(el){
-    const wrap = el.closest('[data-mwrap]'); if(!wrap) return;
-    const h=wrap.querySelector('[data-side="h"]').value, a=wrap.querySelector('[data-side="a"]').value;
-    if(h===''||a==='') return;
-    const match_id=+el.dataset.match;
-    const { error } = await sb.from('predictions').upsert({ user_id:S.me.id, match_id, pred_home:+h, pred_away:+a, updated_at:new Date().toISOString() }, { onConflict:'user_id,match_id' });
-    if(error){ flashMsg("⛔ "+(error.message||"erro")); return; }
-    const p=S.preds.find(x=>x.user_id===S.me.id&&x.match_id===match_id);
-    if(p){ p.pred_home=+h; p.pred_away=+a; } else S.preds.push({user_id:S.me.id,match_id,pred_home:+h,pred_away:+a});
-    flashMsg("✓ Palpite salvo");
+  async savePalpite(id){
+    const card=document.querySelector(`[data-card="${id}"]`); if(!card) return;
+    const hi=card.querySelector('[data-side="h"]'), ai=card.querySelector('[data-side="a"]');
+    const rh = hi && hi.value!=='' ? +hi.value : null;
+    const ra = ai && ai.value!=='' ? +ai.value : null;
+    let p=S.preds.find(x=>x.user_id===S.me.id&&x.match_id===id);
+    if(!p){ p={user_id:S.me.id,match_id:id,pred_home:null,pred_away:null,pred_et:null,pred_pen:null}; S.preds.push(p); }
+    p.pred_home=rh; p.pred_away=ra;
+    const { error } = await sb.from('predictions').upsert({ user_id:S.me.id, match_id:id, pred_home:rh, pred_away:ra, pred_et:p.pred_et??null, pred_pen:p.pred_pen??null, updated_at:new Date().toISOString() }, { onConflict:'user_id,match_id' });
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    flashMsg('✓ Palpite salvo');
+  },
+  async pickExtra(id, field, value){
+    let p=S.preds.find(x=>x.user_id===S.me.id&&x.match_id===id);
+    if(!p){ p={user_id:S.me.id,match_id:id,pred_home:null,pred_away:null,pred_et:null,pred_pen:null}; S.preds.push(p); }
+    p[field] = norm(p[field])===norm(value) ? null : value;
+    const { error } = await sb.from('predictions').upsert({ user_id:S.me.id, match_id:id, pred_home:p.pred_home??null, pred_away:p.pred_away??null, pred_et:p.pred_et??null, pred_pen:p.pred_pen??null, updated_at:new Date().toISOString() }, { onConflict:'user_id,match_id' });
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    flashMsg('✓ Salvo'); render();
   },
   async saveSpecial(){
     if(specialLocked(S.matches)){ flashMsg("⛔ Mercado fechado"); return; }
-    const champion=document.getElementById('sp-champ').value.trim();
-    const top_scorer=document.getElementById('sp-scorer').value.trim();
+    const champion=document.getElementById('sp-champ').value.trim(), top_scorer=document.getElementById('sp-scorer').value.trim();
     const { error } = await sb.from('special_predictions').upsert({ user_id:S.me.id, champion, top_scorer, updated_at:new Date().toISOString() }, { onConflict:'user_id' });
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    const s=S.specials.find(x=>x.user_id===S.me.id);
-    if(s){ s.champion=champion; s.top_scorer=top_scorer; } else S.specials.push({user_id:S.me.id,champion,top_scorer});
-    flashMsg("✓ Especiais salvos");
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    let s=S.specials.find(x=>x.user_id===S.me.id); if(s){ s.champion=champion; s.top_scorer=top_scorer; } else S.specials.push({user_id:S.me.id,champion,top_scorer});
+    flashMsg('✓ Especiais salvos');
   },
 
-  /* admin: resultados + avanço do chaveamento */
-  async saveResult(el){
-    const wrap=el.closest('[data-mwrap]'); if(!wrap) return;
-    const h=wrap.querySelector('[data-side="h"]').value, a=wrap.querySelector('[data-side="a"]').value;
-    if((h==='')!==(a==='')) return; // ou os dois vazios ou os dois preenchidos
-    const id=+el.dataset.match;
-    const rh = h===''?null:+h, ra = a===''?null:+a;
-    const m=S.matches.find(x=>x.id===id);
-    const update={ result_home:rh, result_away:ra };
-    // se empatou e não é fase de grupos, zera winner_team até o admin escolher quem avançou
-    if(rh!=null && rh===ra && m && !m.group_name) update.winner_team=null;
-    const { error } = await sb.from('matches').update(update).eq('id', id);
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    Object.assign(m, update);
-    await App._propagar();
-    flashMsg("✓ Resultado salvo");
-    render();
+  /* admin */
+  async saveResult(id){
+    const card=document.querySelector(`[data-card="${id}"]`); if(!card) return;
+    const h=card.querySelector('[data-side="h"]').value, a=card.querySelector('[data-side="a"]').value;
+    if((h==='')!==(a==='')) return;
+    const rh=h===''?null:+h, ra=a===''?null:+a, m=S.matches.find(x=>x.id===id);
+    const upd={ result_home:rh, result_away:ra };
+    if(!(rh!=null && rh===ra && isKO(m))){
+      upd.et_outcome=null; upd.pen_winner=null;
+      upd.winner_team = rh!=null ? (rh>ra?m.home_team:m.away_team) : null;
+    }
+    const { error } = await sb.from('matches').update(upd).eq('id',id);
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    Object.assign(m,upd); await App._propagar(); flashMsg('✓ Resultado salvo'); render();
   },
-  async setWinner(id, team){
-    const { error } = await sb.from('matches').update({ winner_team:team }).eq('id', id);
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    const m=S.matches.find(x=>x.id===id); if(m) m.winner_team=team;
-    await App._propagar();
-    flashMsg("✓ Quem avançou definido");
-    render();
+  async setET(id,val){
+    const m=S.matches.find(x=>x.id===id); const upd={ et_outcome:val };
+    if(val==='Empate'){ upd.winner_team=m.pen_winner||null; }
+    else { upd.pen_winner=null; upd.winner_team=val; }
+    const { error } = await sb.from('matches').update(upd).eq('id',id);
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    Object.assign(m,upd); await App._propagar(); flashMsg('✓ Salvo'); render();
   },
-  async _propagar(){
-    const ch=bracketChanges();
-    for(const c of ch){ await sb.from('matches').update({ home_team:c.home_team, away_team:c.away_team }).eq('id', c.id); }
+  async setPen(id,val){
+    const m=S.matches.find(x=>x.id===id); const upd={ pen_winner:val, winner_team:val };
+    const { error } = await sb.from('matches').update(upd).eq('id',id);
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    Object.assign(m,upd); await App._propagar(); flashMsg('✓ Salvo'); render();
+  },
+  async _propagar(){ const ch=bracketChanges(); for(const c of ch){ await sb.from('matches').update({ home_team:c.home_team, away_team:c.away_team }).eq('id',c.id); } },
+  async toggleVal(uid,mid){
+    if(isValidated(uid,mid)){
+      const { error } = await sb.from('validations').delete().eq('user_id',uid).eq('match_id',mid);
+      if(error){ flashMsg('⛔ '+error.message); return; }
+      S.validations=S.validations.filter(v=>!(v.user_id===uid&&v.match_id===mid));
+    } else {
+      const { error } = await sb.from('validations').insert({ user_id:uid, match_id:mid });
+      if(error){ flashMsg('⛔ '+error.message); return; }
+      S.validations.push({user_id:uid,match_id:mid});
+    }
+    flashMsg('✓'); render();
+  },
+  async saveDeadline(){
+    const v=document.getElementById('dl').value; if(!v) return;
+    const iso=new Date(v).toISOString();
+    const { error } = await sb.from('settings').upsert({ key:'late_deadline', value:iso }, { onConflict:'key' });
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    S.settings.late_deadline=iso; flashMsg('✓ Prazo salvo'); render();
   },
   async saveWinners(){
-    const champion=document.getElementById('g-champ').value.trim();
-    const top_scorer=document.getElementById('g-scorer').value.trim();
+    const champion=document.getElementById('g-champ').value.trim(), top_scorer=document.getElementById('g-scorer').value.trim();
     const { error } = await sb.from('settings').upsert([{key:'champion',value:champion},{key:'top_scorer',value:top_scorer}], { onConflict:'key' });
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    S.settings.champion=champion; S.settings.top_scorer=top_scorer;
-    flashMsg("✓ Gabarito salvo"); render();
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    S.settings.champion=champion; S.settings.top_scorer=top_scorer; flashMsg('✓ Gabarito salvo'); render();
   },
   async saveRegras(){
     const value=document.getElementById('r-txt').value;
-    const { error } = await sb.from('settings').upsert({key:'regras',value}, { onConflict:'key' });
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    S.settings.regras=value; flashMsg("✓ Regras salvas");
+    const { error } = await sb.from('settings').upsert({ key:'regras', value }, { onConflict:'key' });
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    S.settings.regras=value; flashMsg('✓ Regras salvas');
   },
   async criarJogo(){
     const g=id=>document.getElementById(id).value.trim();
-    const stage=g('c-stage')||'Mata-mata', home=g('c-home'), away=g('c-away'), kick=g('c-kick');
-    if(!home||!away||!kick){ flashMsg("⛔ Preencha mandante, visitante e data"); return; }
-    const row={ match_no: g('c-no')?+g('c-no'):null, stage, group_name:g('c-grupo')||null, home_team:home, away_team:away, kickoff_at:new Date(kick).toISOString(), venue:g('c-venue')||null };
+    const home=g('c-home'), away=g('c-away'), kick=g('c-kick');
+    if(!home||!away||!kick){ flashMsg('⛔ Preencha mandante, visitante e data'); return; }
+    const row={ match_no:g('c-no')?+g('c-no'):null, stage:g('c-stage')||'Mata-mata', group_name:g('c-grupo')||null, home_team:home, away_team:away, kickoff_at:new Date(kick).toISOString(), venue:g('c-venue')||null };
     const { data, error } = await sb.from('matches').insert(row).select().single();
-    if(error){ flashMsg("⛔ "+error.message); return; }
-    S.matches.push(data); S.matches.sort((a,b)=>new Date(a.kickoff_at)-new Date(b.kickoff_at));
-    flashMsg("✓ Jogo criado"); render();
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    S.matches.push(data); S.matches.sort((a,b)=>new Date(a.kickoff_at)-new Date(b.kickoff_at)); flashMsg('✓ Jogo criado'); render();
   },
 };
 window.App = App;
 
-/* ===== filtros de grupo (inclui chip "Mata-mata") ===== */
+/* ===== filtros de grupo ===== */
 function gruposDe(){ return [...new Set(S.matches.map(m=>m.group_name).filter(Boolean))].sort(); }
 function temMata(){ return S.matches.some(m=>!m.group_name); }
-function filtra(lista, g){
-  if(g==='todos') return lista;
-  if(g==='Mata-mata') return lista.filter(m=>!m.group_name);
-  return lista.filter(m=>m.group_name===g);
-}
-function chips(sel, cb){
-  const gs=gruposDe();
-  let h=`<div class="filtros"><span class="lbl">Filtro:</span>`;
-  h+=`<button class="chip ${sel==='todos'?'on':''}" onclick="App.${cb}('todos')">todos</button>`;
-  gs.forEach(g=> h+=`<button class="chip ${sel===g?'on':''}" onclick="App.${cb}('${g}')">${g}</button>`);
+function filtra(lista,g){ if(g==='todos') return lista; if(g==='Mata-mata') return lista.filter(m=>!m.group_name); return lista.filter(m=>m.group_name===g); }
+function chips(sel,cb){
+  let h=`<div class="filtros"><span class="lbl">Filtro:</span><button class="chip ${sel==='todos'?'on':''}" onclick="App.${cb}('todos')">todos</button>`;
+  gruposDe().forEach(g=> h+=`<button class="chip ${sel===g?'on':''}" onclick="App.${cb}('${g}')">${g}</button>`);
   if(temMata()) h+=`<button class="chip ${sel==='Mata-mata'?'on':''}" onclick="App.${cb}('Mata-mata')">Mata-mata</button>`;
   return h+`</div>`;
 }
 
-/* ===== render ===== */
-function el(id){ return document.getElementById(id); }
-function setHTML(h){ el('app').innerHTML=h; }
-
+/* ===== render raiz ===== */
+function setHTML(h){ document.getElementById('app').innerHTML=h; }
 function render(){
-  if(!S.auth){ return renderAuth(); }
+  if(!S.auth) return renderAuth();
   if(S.me?.role==='admin') return renderAdmin();
   return renderDash();
 }
-
-function topo(extraDir, tabsHTML){
+function topo(dir,tabs){
   return `<header class="topo"><div class="topo-in">
     <div class="topo-logo"><span class="mini">⚽</span> <span>Bolão da Copa</span></div>
-    <div class="topo-dir">${extraDir}
+    <div class="topo-dir">${dir}
       <button class="theme-btn" onclick="App.toggleTheme()">${document.documentElement.getAttribute('data-theme')==='dark'?'Claro ☀️':'Escuro 🌙'}</button>
       <button class="secondary" style="padding:7px 12px;font-size:13px" onclick="App.logout()">Sair</button>
-    </div></div><nav class="tabs">${tabsHTML}</nav></header>`;
+    </div></div><nav class="tabs">${tabs}</nav></header>`;
 }
 
+/* ===== AUTENTICAÇÃO ===== */
 function renderAuth(){
-  const reg = S.authMode==='register';
+  const reg=S.authMode==='register';
   setHTML(`<div class="login-wrap"><div class="login-card">
     <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button class="theme-btn" onclick="App.toggleTheme()">${document.documentElement.getAttribute('data-theme')==='dark'?'Claro ☀️':'Escuro 🌙'}</button></div>
-    <div class="crest">⚽</div>
-    <h1>${reg?'Criar conta':'Bolão da Copa'}</h1>
+    <div class="crest">⚽</div><h1>${reg?'Criar conta':'Bolão da Copa'}</h1>
     <p class="sub">${reg?'Escolha um usuário único. Não precisa de e-mail.':'Entre com seu usuário e senha'}</p>
     <div class="grid">
       <div><label>Usuário</label><input id="f-user" autocomplete="username" /></div>
@@ -437,154 +503,215 @@ function renderAuth(){
       ${S.authErr?`<p class="erro-msg">${S.authErr}</p>`:''}
       <button ${S.busy?'disabled':''} onclick="App.${reg?'registrar':'login'}()">${S.busy?'Aguarde…':(reg?'Criar conta':'Entrar')}</button>
     </div>
-    <p class="muted" style="text-align:center;margin-top:16px;font-size:14px">
-      ${reg?'Já tem conta?':'Ainda não tem conta?'}
-      <a style="color:var(--aco);font-weight:600;cursor:pointer" onclick="App.setAuthMode('${reg?'login':'register'}')">${reg?'Entrar':'Cadastre-se'}</a>
-    </p>
+    <p class="muted" style="text-align:center;margin-top:16px;font-size:14px">${reg?'Já tem conta?':'Ainda não tem conta?'}
+      <a style="color:var(--aco);font-weight:600;cursor:pointer" onclick="App.setAuthMode('${reg?'login':'register'}')">${reg?'Entrar':'Cadastre-se'}</a></p>
   </div></div>`);
 }
 
-/* ---------- DASHBOARD (usuário) ---------- */
+/* ===== DASHBOARD (usuário) ===== */
 function renderDash(){
-  const dir = `<span>@${S.me.username}</span>`;
-  const tabs = ['palpites','ranking','revelados','regras'].map(t=>{
-    const nome={palpites:'Meus palpites',ranking:'Classificação',revelados:'Revelados',regras:'Regras'}[t];
-    return `<button class="${S.tab===t?'on':''}" onclick="App.setTab('${t}')">${nome}</button>`;
-  }).join('');
-  let body='';
-  if(S.tab==='palpites') body=tabPalpites();
-  else if(S.tab==='ranking') body=tabRanking();
-  else if(S.tab==='revelados') body=tabRevelados();
-  else body=tabRegras();
+  const dir=`<span>@${S.me.username}</span>`;
+  const tabs=[['palpites','Palpites'],['pontuacao','Pontuação'],['chaveamento','Chaveamento'],['regras','Regras']]
+    .map(([t,n])=>`<button class="${S.tab===t?'on':''}" onclick="App.setTab('${t}')">${n}</button>`).join('');
+  let body = S.tab==='palpites'?tabPalpites() : S.tab==='pontuacao'?tabPontuacao() : S.tab==='chaveamento'?tabChaveamento() : tabRegras();
   setHTML(topo(dir,tabs)+`<main class="container">${body}</main>`);
 }
 
+/* ---- card de palpite (90 min + prorrogação/pênaltis) ---- */
+function blocoExtra(m,p,lock){
+  const opt=(field,val,label)=>{
+    const on=norm(p[field])===norm(val);
+    return `<button class="opt ${on?'on':''} ${lock?'lock':''}" ${lock?'':`onclick="App.pickExtra(${m.id},'${field}','${(''+val).replace(/'/g,"\\'")}')"`}>${label}</button>`;
+  };
+  return `<div class="extra-box">
+    <div class="extra-q">Se for pra prorrogação, quem vence? (+1)</div>
+    <div class="opts">${opt('pred_et',m.home_team,m.home_team)}${opt('pred_et','Empate','Empate')}${opt('pred_et',m.away_team,m.away_team)}</div>
+    <div class="extra-q">Se for pra pênaltis, quem vence? (+1)</div>
+    <div class="opts">${opt('pred_pen',m.home_team,m.home_team)}${opt('pred_pen',m.away_team,m.away_team)}</div>
+    <div class="hint">Vale mesmo se você errar o placar dos 90 min — e só conta se o jogo for pra lá.</div>
+  </div>`;
+}
+function linhaPontos(m,p){
+  const gate=m.late_window && !isValidated(S.me.id,m.id);
+  const tot=gate?0:pts90(m,p)+ptsExtra(m,p);
+  let det=`Resultado: ${m.result_home} × ${m.result_away}`;
+  if(m.et_outcome) det+=` · prorrog.: ${m.et_outcome}`;
+  if(m.pen_winner) det+=` · pênaltis: ${m.pen_winner}`;
+  return `<div class="resultado-real">${det} <span class="pts-tag pts-${tot>=3?3:tot>=1?1:0}">+${tot} pts</span></div>`;
+}
+function cardPalpite(m){
+  const p=myPred(m.id)||{};
+  const lock=!enterable(m);
+  const ko=isKO(m), hasRes=m.result_home!=null && m.result_away!=null;
+  const validated=isValidated(S.me.id,m.id);
+  return `<div class="jogo" data-card="${m.id}">
+    <div class="jogo-topo"><div class="jogo-meta"><span class="grp-tag">${m.group_name?'Grupo '+m.group_name:m.stage}</span> ${fmtData(m.kickoff_at)} · ${fmtHora(m.kickoff_at)}h
+      ${m.late_window?`<span class="badge-val ${validated?'badge-ok':'badge-pend'}">${validated?'validado':'aguardando validação'}</span>`:''}</div>
+      <span class="estado ${lock?'fechado':'aberto'}">${lock?'fechado':'aberto'}</span></div>
+    <div class="confronto">
+      <div class="time dir">${m.home_team} ${flag(m.home_team,18)}</div>
+      <input class="placar-in" type="number" min="0" inputmode="numeric" value="${p.pred_home??''}" ${lock?'disabled':''} data-side="h" onblur="App.savePalpite(${m.id})">
+      <span class="x">×</span>
+      <input class="placar-in" type="number" min="0" inputmode="numeric" value="${p.pred_away??''}" ${lock?'disabled':''} data-side="a" onblur="App.savePalpite(${m.id})">
+      <div class="time">${flag(m.away_team,18)} ${m.away_team}</div>
+    </div>
+    ${ko?blocoExtra(m,p,lock):''}
+    ${hasRes?linhaPontos(m,p):''}
+  </div>`;
+}
+
 function tabPalpites(){
-  const myPred = id => S.preds.find(p=>p.user_id===S.me.id && p.match_id===id);
-  const locked = specialLocked(S.matches);
-  const sp = S.specials.find(s=>s.user_id===S.me.id) || {};
-  let h = `<div class="esp-card">
+  const locked=specialLocked(S.matches);
+  const sp=S.specials.find(s=>s.user_id===S.me.id)||{};
+  let h=`<div class="esp-card">
     <h3>⭐ Palpites especiais <small style="font-weight:400;color:var(--txt2);font-size:12px">(10 pts cada)</small></h3>
     <p class="muted" style="font-size:13px;margin:0 0 12px">${locked?'⛔ Mercado fechado — começou no primeiro jogo.':'Escolha antes do primeiro jogo. Depois, congela.'}</p>
     <div class="esp-row"><label>Campeão</label><input id="sp-champ" ${locked?'disabled':''} value="${(sp.champion||'').replace(/"/g,'&quot;')}" placeholder="seleção campeã"></div>
     <div class="esp-row"><label>Artilheiro</label><input id="sp-scorer" ${locked?'disabled':''} value="${(sp.top_scorer||'').replace(/"/g,'&quot;')}" placeholder="nome do jogador"></div>
-    ${locked?'':'<button onclick="App.saveSpecial()" style="margin-top:4px">Salvar especiais</button>'}
-  </div>`;
-  h += chips(S.grupo,'setGrupo');
-  const jogos = filtra(S.matches, S.grupo);
+    ${locked?'':'<button onclick="App.saveSpecial()" style="margin-top:4px">Salvar especiais</button>'}</div>`;
+  h+=`<div class="subtabs"><span class="chip ${S.soPend?'on':''}" onclick="App.setPend(true)">Pendentes</span><span class="chip ${!S.soPend?'on':''}" onclick="App.setPend(false)">Todos</span></div>`;
+  let lista=S.matches.slice().sort((a,b)=>new Date(a.kickoff_at)-new Date(b.kickoff_at));
+  if(S.soPend) lista=lista.filter(m=> enterable(m) && !temPalpite90(myPred(m.id)));
   let lastDay='';
-  h+='<div>';
-  for(const m of jogos){
-    const dk=fmtData(m.kickoff_at), showDay = dk!==lastDay; if(showDay) lastDay=dk;
-    const lock=isLocked(m.kickoff_at);
-    const p=myPred(m.id); const vh=p?p.pred_home:'', va=p?p.pred_away:'';
-    const hasRes = m.result_home!=null && m.result_away!=null;
-    const pts = hasRes ? pointsForMatch(m, (vh!==''&&va!=='')?{pred_home:+vh,pred_away:+va}:null) : null;
-    h+= (showDay?`<div class="dia-sep">${dk}</div>`:'') + `<div class="jogo" data-mwrap>
-      <div class="jogo-topo"><div class="jogo-meta"><span class="grp-tag">${m.group_name?'Grupo '+m.group_name:m.stage}</span> ${dk} · ${fmtHora(m.kickoff_at)}h</div>
-      <span class="estado ${lock?'fechado':'aberto'}">${lock?'fechado':'aberto'}</span></div>
-      <div class="confronto">
-        <div class="time dir">${m.home_team} ${flag(m.home_team,18)}</div>
-        <input class="placar-in" type="number" min="0" inputmode="numeric" value="${vh}" ${lock?'disabled':''} data-match="${m.id}" data-side="h" onblur="App.savePred(this)">
-        <span class="x">×</span>
-        <input class="placar-in" type="number" min="0" inputmode="numeric" value="${va}" ${lock?'disabled':''} data-match="${m.id}" data-side="a" onblur="App.savePred(this)">
-        <div class="time">${flag(m.away_team,18)} ${m.away_team}</div>
-      </div>
-      ${hasRes?`<div class="resultado-real">Resultado: ${m.result_home} × ${m.result_away} ${pts!=null?`<span class="pts-tag pts-${pts}">+${pts} pts</span>`:''}</div>`:''}
-    </div>`;
+  for(const m of lista){
+    const dk=fmtData(m.kickoff_at), show=dk!==lastDay; if(show) lastDay=dk;
+    h+=(show?`<div class="dia-sep">${dk}</div>`:'')+cardPalpite(m);
   }
-  if(jogos.length===0) h+='<p class="vazio">Nenhum jogo com esse filtro.</p>';
-  return h+'</div>';
+  if(lista.length===0) h+=`<p class="vazio">${S.soPend?'Tudo em dia! Nenhum palpite pendente. 🎯':'Nenhum jogo.'}</p>`;
+  return h;
 }
 
-function tabRanking(){
+/* ---- Pontuação (com nome clicável) ---- */
+function tabPontuacao(){
+  if(S.verPessoa) return pessoaDetalhe(S.verPessoa);
   const r=buildRanking(); const medal=["🥇","🥈","🥉"];
-  let h='<div>';
+  let h=`<p class="muted" style="font-size:13px;margin-bottom:10px">Toque num nome para ver os palpites e pontos da pessoa em todas as rodadas.</p>`;
   r.forEach((x,i)=>{ h+=`<div class="rank-row ${x.userId===S.me.id?'eu':''}">
     <div class="rank-pos">${medal[i]||(i+1)+'º'}</div>
-    <div class="rank-nome">@${x.username} ${x.userId===S.me.id?'<small style="color:var(--aco)">(você)</small>':''}
-      <div class="rank-det">${x.exactScores} cravadas · ${x.outcomeHits} resultados${x.specialPoints>0?` · ${x.specialPoints} especiais`:''}</div></div>
+    <div class="rank-nome"><span class="name-link" onclick="App.verPessoa('${x.userId}')">@${x.username}</span> ${x.userId===S.me.id?'<small style="color:var(--aco)">(você)</small>':''}
+      <div class="rank-det">${x.exactScores} cravadas · ${x.matchPoints} de jogos${x.specialPoints?` · ${x.specialPoints} especiais`:''}</div></div>
     <div class="rank-pts">${x.total}<small> pts</small></div></div>`; });
-  return h+'<p class="muted" style="text-align:center;font-size:12px;margin-top:14px">Desempate: nº de cravadas → nº de resultados certos.</p></div>';
+  return h+`<p class="muted" style="text-align:center;font-size:12px;margin-top:14px">Desempate: nº de cravadas → nº de resultados certos.</p>`;
 }
-
-function tabRevelados(){
-  const nome={}; S.users.forEach(u=>nome[u.id]=u.username);
-  const ptsFor=(m,p)=>{ if(m.result_home==null||m.result_away==null) return null; if(p.pred_home===m.result_home&&p.pred_away===m.result_away) return 3; if(outcome(p.pred_home,p.pred_away)===outcome(m.result_home,m.result_away)) return 1; return 0; };
-  let h=chips(S.revGrupo,'setRevGrupo');
-  const fechados = filtra(S.matches.filter(m=>isLocked(m.kickoff_at)), S.revGrupo).sort((a,b)=>new Date(b.kickoff_at)-new Date(a.kickoff_at));
-  if(fechados.length===0) return h+'<p class="vazio">Nenhum jogo fechado com esse filtro.<br>Os palpites aparecem após o apito de cada jogo.</p>';
+function pessoaDetalhe(uid){
+  const u=S.users.find(x=>x.id===uid)||{username:'?'};
+  const mine=S.preds.filter(p=>p.user_id===uid);
+  const sp=S.specials.find(s=>s.user_id===uid);
+  const total=buildRanking().find(r=>r.userId===uid)?.total||0;
+  const fechados=S.matches.filter(m=>isLocked(m.kickoff_at)).sort((a,b)=>new Date(b.kickoff_at)-new Date(a.kickoff_at));
+  let h=`<button class="voltar" onclick="App.verPessoa(null)">← voltar</button><h3 style="margin-bottom:12px">Palpites de @${u.username} <small style="color:var(--aco)">— ${total} pts</small></h3>`;
+  if(specialLocked(S.matches)) h+=`<div class="esp-card" style="padding:14px"><b>🏆 Campeão:</b> ${sp?.champion||'—'} &nbsp;·&nbsp; <b>👟 Artilheiro:</b> ${sp?.top_scorer||'—'}</div>`;
+  if(fechados.length===0) return h+`<p class="vazio">Nenhum jogo começou ainda.</p>`;
+  let lastDay='';
   for(const m of fechados){
-    const ps=S.preds.filter(p=>p.match_id===m.id);
-    const hasRes=m.result_home!=null&&m.result_away!=null;
-    const open=!!S.open[m.id];
-    const ord = hasRes ? [...ps].sort((a,b)=>(ptsFor(m,b)??0)-(ptsFor(m,a)??0)) : ps;
-    h+=`<div class="acc ${open?'aberto':''}">
-      <div class="acc-cab" onclick="App.toggleAcc('${m.id}')"><span class="acc-titulo">
-        ${flag(m.home_team,16)} ${m.home_team}
-        ${hasRes?`<span class="acc-resultado">${m.result_home} × ${m.result_away}</span>`:'<span class="acc-pend">(aguardando)</span>'}
-        ${flag(m.away_team,16)} ${m.away_team}</span><span class="seta">▶</span></div>
-      <div class="acc-corpo">
-        <p class="acc-pend" style="margin:2px 0 8px">${m.group_name?'Grupo '+m.group_name:m.stage} · ${fmtData(m.kickoff_at)} · ${ps.length} palpite${ps.length===1?'':'s'}</p>
-        ${ps.length===0?'<p class="oculto">Ninguém palpitou neste jogo.</p>':''}
-        ${ord.map(p=>{const pt=ptsFor(m,p);return `<div class="rev-linha"><span>@${nome[p.user_id]||'?'}</span><span>${p.pred_home} × ${p.pred_away} ${pt!=null?`<span class="pts-tag pts-${pt}">+${pt}</span>`:''}</span></div>`;}).join('')}
-      </div></div>`;
+    const dk=fmtData(m.kickoff_at), show=dk!==lastDay; if(show) lastDay=dk;
+    const p=mine.find(x=>x.match_id===m.id);
+    const hasRes=m.result_home!=null && m.result_away!=null;
+    const gate=m.late_window && !isValidated(uid,m.id);
+    const tot=gate?0:(p?pts90(m,p)+ptsExtra(m,p):0);
+    h+=(show?`<div class="dia-sep">${dk}</div>`:'')+`<div class="jogo">
+      <div class="jogo-meta" style="margin-bottom:7px"><span class="grp-tag">${m.group_name?'Grupo '+m.group_name:m.stage}</span> ${fmtHora(m.kickoff_at)}h ${m.late_window&&!isValidated(uid,m.id)?'<span class="badge-val badge-pend">não validado</span>':''}</div>
+      <div class="confronto">
+        <div class="time dir">${m.home_team} ${flag(m.home_team,16)}</div>
+        <div style="font-weight:800;min-width:60px;text-align:center;font-size:16px">${p&&p.pred_home!=null?`${p.pred_home} × ${p.pred_away}`:'—'}</div>
+        <div class="time">${flag(m.away_team,16)} ${m.away_team}</div>
+      </div>
+      ${(p&&(p.pred_et||p.pred_pen))?`<div class="hint">prorrog.: ${p.pred_et||'—'} · pênaltis: ${p.pred_pen||'—'}</div>`:''}
+      ${hasRes?`<div class="resultado-real">Resultado ${m.result_home} × ${m.result_away} <span class="pts-tag pts-${tot>=3?3:tot>=1?1:0}">+${tot} pts</span></div>`:''}
+    </div>`;
   }
   return h;
 }
 
+/* ---- Chaveamento ---- */
+function tabChaveamento(){
+  const byNo={}; S.matches.forEach(m=>{ if(m.match_no!=null) byNo[m.match_no]=m; });
+  const colDef=[['Rodada de 32',[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88]],['Oitavas',[89,90,91,92,93,94,95,96]],['Quartas',[97,98,99,100]],['Semifinal',[101,102]],['Final',[104]]];
+  const linha=(team,score,isWin)=>{
+    const tbd=!team||/^(Venc|Perd)\./.test(team)||team==='a definir';
+    return `<div class="br-team ${isWin&&!tbd?'win':''} ${tbd?'tbd':''}">${tbd?'a definir':`${flag(team,14)} ${team}`}${(score!=null&&!tbd)?`<span class="sc">${score}</span>`:''}</div>`;
+  };
+  const card=no=>{ const m=byNo[no]; if(!m) return ''; const w=winnerOf(m);
+    return `<div class="br-card ${no===104?'br-final':''}">${linha(m.home_team,m.result_home,w&&norm(w)===norm(m.home_team))}${linha(m.away_team,m.result_away,w&&norm(w)===norm(m.away_team))}</div>`; };
+  const cols=colDef.map(([t,nos])=>`<div class="chave-col"><h4>${t}</h4>${nos.map(card).join('')}</div>`).join('');
+  const champ=byNo[104]?winnerOf(byNo[104]):null;
+  const extra=`<div class="chave-col"><h4>Campeão</h4><div class="br-camp">${champ?`${flag(champ,16)} ${champ}`:'🏆 a definir'}</div><h4 style="margin-top:14px">3º lugar</h4>${card(103)}</div>`;
+  return `<p class="muted" style="font-size:13px;margin-bottom:8px">O quadro se preenche sozinho conforme os resultados são lançados. 👉 Arraste pro lado para ver todas as fases.</p>
+    <div class="chave-wrap"><div class="chave">${cols}${extra}</div></div>`;
+}
+
 function tabRegras(){
-  const txt = S.settings.regras || 'O regulamento ainda não foi preenchido pelo admin.';
+  const txt=S.settings.regras||'O regulamento ainda não foi preenchido pelo admin.';
   return `<div class="card"><h3>📋 Regulamento</h3><div class="regras-txt">${txt.replace(/</g,'&lt;')}</div></div>`;
 }
 
-/* ---------- ADMIN ---------- */
+/* ===== ADMIN ===== */
 function renderAdmin(){
-  const dir = `<span>@${S.me.username}</span> <span class="badge-mod">admin</span>`;
-  const tabs = [['resultados','Resultados'],['ranking','Ranking'],['gabarito','Gabarito'],['usuarios','Usuários'],['criar','Criar jogo'],['regras','Regras']]
+  const dir=`<span>@${S.me.username}</span> <span class="badge-mod">admin</span>`;
+  const tabs=[['resultados','Resultados'],['pontuacao','Pontuação'],['validar','Validar'],['gabarito','Gabarito'],['usuarios','Usuários'],['criar','Criar jogo'],['regras','Regras']]
     .map(([t,n])=>`<button class="${S.atab===t?'on':''}" onclick="App.setATab('${t}')">${n}</button>`).join('');
-  let body='';
-  if(S.atab==='resultados') body=admResultados();
-  else if(S.atab==='ranking') body=admRanking();
-  else if(S.atab==='gabarito') body=admGabarito();
-  else if(S.atab==='usuarios') body=admUsuarios();
-  else if(S.atab==='criar') body=admCriar();
-  else body=admRegras();
+  let body;
+  switch(S.atab){
+    case 'pontuacao': body=tabPontuacao(); break;
+    case 'validar': body=admValidar(); break;
+    case 'gabarito': body=admGabarito(); break;
+    case 'usuarios': body=admUsuarios(); break;
+    case 'criar': body=admCriar(); break;
+    case 'regras': body=admRegras(); break;
+    default: body=admResultados();
+  }
   setHTML(topo(dir,tabs)+`<main class="container">${body}</main>`);
 }
 
 function admResultados(){
   let h=chips(S.grupo,'setGrupo');
-  h+='<p class="muted" style="font-size:13px;margin-bottom:10px">Digite o placar e ele salva sozinho ao sair do campo. O chaveamento avança automaticamente. Empate no mata-mata: escolha quem passou (pênaltis).</p>';
-  const jogos=filtra(S.matches,S.grupo);
-  let lastDay='';
+  h+='<p class="muted" style="font-size:13px;margin-bottom:10px">O placar salva sozinho ao sair do campo. No mata-mata, se empatar nos 90 min, escolha o que aconteceu na prorrogação/pênaltis.</p>';
+  const jogos=filtra(S.matches,S.grupo); let lastDay='';
   for(const m of jogos){
-    const dk=fmtData(m.kickoff_at), showDay=dk!==lastDay; if(showDay) lastDay=dk;
+    const dk=fmtData(m.kickoff_at), show=dk!==lastDay; if(show) lastDay=dk;
     const vh=m.result_home!=null?m.result_home:'', va=m.result_away!=null?m.result_away:'';
-    const empateKO = m.result_home!=null && m.result_home===m.result_away && !m.group_name;
-    h+= (showDay?`<div class="dia-sep">${dk}</div>`:'') + `<div class="jogo" data-mwrap>
+    const empateKO=m.result_home!=null && m.result_home===m.result_away && isKO(m);
+    let extra='';
+    if(empateKO){
+      const b=(fn,val,lbl,sel)=>`<button class="${sel?'':'secondary'}" style="padding:5px 10px;font-size:12px" onclick="App.${fn}(${m.id},'${(''+val).replace(/'/g,"\\'")}')">${lbl}</button>`;
+      extra=`<div class="win-sel">Prorrogação: ${b('setET',m.home_team,m.home_team,m.et_outcome===m.home_team)}${b('setET','Empate','Empate (foi pra pênaltis)',m.et_outcome==='Empate')}${b('setET',m.away_team,m.away_team,m.et_outcome===m.away_team)}</div>`;
+      if(m.et_outcome==='Empate') extra+=`<div class="win-sel">Pênaltis: ${b('setPen',m.home_team,m.home_team,m.pen_winner===m.home_team)}${b('setPen',m.away_team,m.away_team,m.pen_winner===m.away_team)}</div>`;
+    }
+    h+=(show?`<div class="dia-sep">${dk}</div>`:'')+`<div class="jogo" data-card="${m.id}">
       <div class="jogo-topo"><div class="jogo-meta"><span class="grp-tag">${m.group_name?'Grupo '+m.group_name:m.stage}</span> ${dk} · ${fmtHora(m.kickoff_at)}h</div></div>
       <div class="confronto">
         <div class="time dir">${m.home_team} ${flag(m.home_team,17)}</div>
-        <input class="placar-in" type="number" min="0" value="${vh}" data-match="${m.id}" data-side="h" onblur="App.saveResult(this)">
+        <input class="placar-in" type="number" min="0" value="${vh}" data-side="h" onblur="App.saveResult(${m.id})">
         <span class="x">×</span>
-        <input class="placar-in" type="number" min="0" value="${va}" data-match="${m.id}" data-side="a" onblur="App.saveResult(this)">
+        <input class="placar-in" type="number" min="0" value="${va}" data-side="a" onblur="App.saveResult(${m.id})">
         <div class="time">${flag(m.away_team,17)} ${m.away_team}</div>
-      </div>
-      ${empateKO?`<div class="win-sel">Quem avançou (pênaltis)?
-        <button class="${m.winner_team===m.home_team?'':'secondary'}" onclick="App.setWinner(${m.id},'${m.home_team.replace(/'/g,"\\'")}')">${m.home_team}</button>
-        <button class="${m.winner_team===m.away_team?'':'secondary'}" onclick="App.setWinner(${m.id},'${m.away_team.replace(/'/g,"\\'")}')">${m.away_team}</button></div>`:''}
-    </div>`;
+      </div>${extra}</div>`;
   }
   if(jogos.length===0) h+='<p class="vazio">Nenhum jogo com esse filtro.</p>';
   return h;
 }
 
-function admRanking(){
-  const r=buildRanking(); const medal=["🥇","🥈","🥉"];
-  return '<div>'+r.map((x,i)=>`<div class="rank-row"><div class="rank-pos">${medal[i]||(i+1)+'º'}</div>
-    <div class="rank-nome">@${x.username}<div class="rank-det">${x.matchPoints} de jogos · ${x.specialPoints} de especiais · ${x.exactScores} cravadas</div></div>
-    <div class="rank-pts">${x.total}<small> pts</small></div></div>`).join('')+'</div>';
+function admValidar(){
+  const late=S.matches.filter(m=>m.late_window).sort((a,b)=>a.match_no-b.match_no);
+  let h=`<div class="card"><h3>Prazo da janela de palpites atrasados</h3>
+    <p class="muted" style="font-size:13px">Até quando os participantes podem lançar no site os palpites que mandaram no WhatsApp.</p>
+    <input id="dl" type="datetime-local" value="${toLocalInput(lateDeadline())}">
+    <button style="margin-top:8px" onclick="App.saveDeadline()">Salvar prazo</button></div>`;
+  if(late.length===0) return h+'<p class="vazio">Nenhum jogo na janela.</p>';
+  h+='<p class="muted" style="font-size:13px;margin:14px 0 8px">Confira cada palpite com o WhatsApp e clique em <b>validar</b>. Só palpites validados contam pontos.</p>';
+  for(const m of late){
+    const ps=S.preds.filter(p=>p.match_id===m.id && (p.pred_home!=null||p.pred_et||p.pred_pen));
+    h+=`<div class="acc aberto"><div class="acc-cab"><span class="acc-titulo">${flag(m.home_team,16)} ${m.home_team} × ${m.away_team} ${flag(m.away_team,16)} <span class="acc-pend">(${m.stage})</span></span></div><div class="acc-corpo">`;
+    if(ps.length===0) h+='<p class="oculto">Ninguém lançou ainda.</p>';
+    for(const p of ps){
+      const u=S.users.find(x=>x.id===p.user_id), val=isValidated(p.user_id,m.id);
+      const ex=[p.pred_et?`prorrog. ${p.pred_et}`:'',p.pred_pen?`pên. ${p.pred_pen}`:''].filter(Boolean).join(' · ');
+      h+=`<div class="rev-linha"><span>@${u?u.username:'?'} — <b>${p.pred_home??'?'} × ${p.pred_away??'?'}</b>${ex?` <span class="muted">(${ex})</span>`:''}</span>
+        <button class="${val?'':'secondary'}" style="padding:5px 12px;font-size:12px" onclick="App.toggleVal('${p.user_id}',${m.id})">${val?'✓ validado':'validar'}</button></div>`;
+    }
+    h+='</div></div>';
+  }
+  return h;
 }
 
 function admGabarito(){
@@ -594,43 +721,38 @@ function admGabarito(){
     <div class="esp-row"><label>Artilheiro</label><input id="g-scorer" value="${(S.settings.top_scorer||'').replace(/"/g,'&quot;')}" placeholder="nome do jogador"></div>
     <button style="margin-top:4px" onclick="App.saveWinners()">Salvar gabarito</button></div>`;
 }
-
 function admUsuarios(){
   return `<div class="card"><h3>Usuários</h3>
-    <p class="muted" style="font-size:13px">As senhas não aparecem. Para redefinir a senha de alguém que esqueceu, use o painel do Supabase em <b>Authentication → Users</b> (botão de redefinir senha).</p>
+    <p class="muted" style="font-size:13px">Para redefinir a senha de alguém, use o painel do Supabase em <b>Authentication → Users</b>.</p>
     <table><thead><tr><th>Usuário</th><th>Tipo</th></tr></thead><tbody>
     ${S.users.map(u=>`<tr><td>@${u.username}</td><td>${u.role==='admin'?'<span class="badge-mod">admin</span>':'user'}</td></tr>`).join('')}
     </tbody></table></div>`;
 }
-
 function admCriar(){
   return `<div class="card"><h3>Criar jogo</h3>
-    <p class="muted" style="font-size:13px;margin-bottom:12px">Os jogos do mata-mata já vêm prontos. Use isto só para algum jogo extra/avulso.</p>
+    <p class="muted" style="font-size:13px;margin-bottom:12px">Os jogos do mata-mata já vêm prontos. Use só para algum jogo avulso.</p>
     <div class="grid">
-      <div class="esp-row"><label>Nº do jogo</label><input id="c-no" type="number"></div>
+      <div class="esp-row"><label>Nº</label><input id="c-no" type="number"></div>
       <div class="esp-row"><label>Fase</label><input id="c-stage" value="Mata-mata"></div>
       <div class="esp-row"><label>Grupo</label><input id="c-grupo" placeholder="A, B… ou vazio"></div>
       <div class="esp-row"><label>Mandante</label><input id="c-home"></div>
       <div class="esp-row"><label>Visitante</label><input id="c-away"></div>
       <div class="esp-row"><label>Data/hora</label><input id="c-kick" type="datetime-local"></div>
       <div class="esp-row"><label>Estádio</label><input id="c-venue"></div>
-      <button style="margin-top:4px" onclick="App.criarJogo()">Criar jogo</button>
-    </div></div>`;
+      <button style="margin-top:4px" onclick="App.criarJogo()">Criar jogo</button></div></div>`;
 }
-
 function admRegras(){
   return `<div class="card"><h3>📋 Editar regulamento</h3>
     <p class="muted" style="font-size:13px;margin-bottom:10px">Todos veem isto na aba "Regras". Mude com o consenso do grupo.</p>
-    <textarea id="r-txt" rows="16">${(S.settings.regras||'').replace(/</g,'&lt;')}</textarea>
+    <textarea id="r-txt" rows="18">${(S.settings.regras||'').replace(/</g,'&lt;')}</textarea>
     <button style="margin-top:10px" onclick="App.saveRegras()">Salvar regras</button></div>`;
 }
 
 /* ===== boot ===== */
 async function boot(){
   if(SUPABASE_URL.includes('SEU-PROJETO') || SUPABASE_ANON_KEY.includes('SUA_CHAVE')){
-    setHTML(`<div class="login-wrap"><div class="login-card"><div class="crest">⚙️</div>
-      <h1>Falta configurar</h1>
-      <p class="sub">Abra este arquivo e preencha <b>SUPABASE_URL</b> e <b>SUPABASE_ANON_KEY</b> lá no topo do código (estão marcados com setas).</p></div></div>`);
+    setHTML(`<div class="login-wrap"><div class="login-card"><div class="crest">⚙️</div><h1>Falta configurar</h1>
+      <p class="sub">Abra o arquivo e preencha <b>SUPABASE_URL</b> e <b>SUPABASE_ANON_KEY</b> no topo do código.</p></div></div>`);
     return;
   }
   const { data:{ session } } = await sb.auth.getSession();
@@ -638,11 +760,10 @@ async function boot(){
   if(S.auth){ await refreshMe(); await loadAll(); }
   render();
   sb.auth.onAuthStateChange(async (_e, sess)=>{
-    const novo = sess?.user || null;
-    const mudou = (novo?.id||null) !== (S.auth?.id||null);
-    S.auth = novo;
+    const novo=sess?.user||null, mudou=(novo?.id||null)!==(S.auth?.id||null);
+    S.auth=novo;
     if(novo && mudou){ await refreshMe(); await loadAll(); }
-    if(!novo){ S.me=null; S.tab='palpites'; }
+    if(!novo){ S.me=null; S.tab='palpites'; S.verPessoa=null; }
     render();
   });
 }
