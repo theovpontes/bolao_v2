@@ -3,15 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <!-- ============================================================
-const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
-const EMAIL_DOMAIN      = "@bolao.local"; // login é por usuário; isto é só um "e-mail interno". Não precisa mexer.
-
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+     SUAS CHAVES — preencha UMA vez (Supabase > Project Settings > API)
+     "Project URL" -> SUPABASE_URL   |   "anon public" -> SUPABASE_ANON_KEY
      ============================================================ -->
 <script>
-const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
+ const SUPABASE_URL      = "https://ynpxfqspgeimzmmpgswn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucHhmcXNwZ2VpbXptbXBnc3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI1MDgsImV4cCI6MjA5NTUyODUwOH0.NVYR0HSBV1Rvpe0OxO5tVJwWQpceuaflkDZ-LPD2D0s";
 </script>
 <!-- ↓↓↓ DAQUI PRA BAIXO É O CÓDIGO. Numa próxima atualização, é só apagar
@@ -752,7 +748,9 @@ function admRegras(){
 
 /* ===== boot ===== */
 async function boot(){
-  if(SUPABASE_URL.includes('SEU-PROJETO') || SUPABASE_ANON_KEY.includes('SUA_CHAVE')){
+  const urlOk = /^https:\/\/[a-z0-9]+\.supabase\.co/.test(String(SUPABASE_URL||'').trim());
+  const keyOk = String(SUPABASE_ANON_KEY||'').trim().length > 30;
+  if(!urlOk || !keyOk){
     setHTML(`<div class="login-wrap"><div class="login-card"><div class="crest">⚙️</div><h1>Falta configurar</h1>
       <p class="sub">Abra o arquivo e preencha <b>SUPABASE_URL</b> e <b>SUPABASE_ANON_KEY</b> no topo do código.</p></div></div>`);
     return;
