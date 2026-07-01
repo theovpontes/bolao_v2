@@ -174,7 +174,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ===== estado ===== */
 const S = { auth:null, me:null, matches:[], preds:[], users:[], specials:[], validations:[], settings:{},
-            tab:'palpites', atab:'resultados', grupo:'todos', soPend:true, verPessoa:null,
+            tab:'palpites', atab:'resultados', grupo:'todos', soPend:true, verPessoa:null, adminView:false,
             authMode:'login', authErr:null, busy:false };
 
 /* ===== bandeiras ===== */
@@ -228,6 +228,7 @@ function pts90(m,p){
   return 0;
 }
 function ptsExtra(m,p){
+  if(m.late_window) return 0; // jogos dos 3 primeiros dias: só placar dos 90 min
   let x=0;
   if(m.et_outcome && p && p.pred_et && norm(p.pred_et)===norm(m.et_outcome)) x+=1;
   if(m.pen_winner && p && p.pred_pen && norm(p.pred_pen)===norm(m.pen_winner)) x+=1;
@@ -332,6 +333,7 @@ const App = {
   setPend(v){ S.soPend=v; render(); },
   verPessoa(id){ S.verPessoa=id; render(); },
   setAuthMode(m){ S.authMode=m; S.authErr=null; render(); },
+  setAdminView(v){ S.adminView=v; S.verPessoa=null; S.tab='palpites'; render(); },
 
   async login(){
     const u=document.getElementById('f-user').value.trim().toLowerCase(), p=document.getElementById('f-pass').value;
@@ -408,6 +410,12 @@ const App = {
     if(error){ flashMsg('⛔ '+error.message); return; }
     Object.assign(m,upd); await App._propagar(); flashMsg('✓ Salvo'); render();
   },
+  async setWinner(id,val){
+    const m=S.matches.find(x=>x.id===id); const upd={ winner_team:val, et_outcome:null, pen_winner:null };
+    const { error } = await sb.from('matches').update(upd).eq('id',id);
+    if(error){ flashMsg('⛔ '+error.message); return; }
+    Object.assign(m,upd); await App._propagar(); flashMsg('✓ Salvo'); render();
+  },
   async _propagar(){ const ch=bracketChanges(); for(const c of ch){ await sb.from('matches').update({ home_team:c.home_team, away_team:c.away_team }).eq('id',c.id); } },
   async toggleVal(uid,mid){
     if(isValidated(uid,mid)){
@@ -467,7 +475,7 @@ function chips(sel,cb){
 function setHTML(h){ document.getElementById('app').innerHTML=h; }
 function render(){
   if(!S.auth) return renderAuth();
-  if(S.me?.role==='admin') return renderAdmin();
+  if(S.me?.role==='admin' && S.adminView) return renderAdmin();
   return renderDash();
 }
 function topo(dir,tabs){
@@ -499,7 +507,8 @@ function renderAuth(){
 
 /* ===== DASHBOARD (usuário) ===== */
 function renderDash(){
-  const dir=`<span>@${S.me.username}</span>`;
+  const ehAdmin = S.me?.role==='admin';
+  const dir=`<span>@${S.me.username}</span>${ehAdmin?` <button class="secondary" style="padding:7px 12px;font-size:13px" onclick="App.setAdminView(true)">🛠 Painel admin</button>`:''}`;
   const tabs=[['palpites','Palpites'],['pontuacao','Pontuação'],['chaveamento','Chaveamento'],['regras','Regras']]
     .map(([t,n])=>`<button class="${S.tab===t?'on':''}" onclick="App.setTab('${t}')">${n}</button>`).join('');
   let body = S.tab==='palpites'?tabPalpites() : S.tab==='pontuacao'?tabPontuacao() : S.tab==='chaveamento'?tabChaveamento() : tabRegras();
@@ -544,7 +553,7 @@ function cardPalpite(m){
       <input class="placar-in" type="number" min="0" inputmode="numeric" value="${p.pred_away??''}" ${lock?'disabled':''} data-side="a" onblur="App.savePalpite(${m.id})">
       <div class="time">${flag(m.away_team,18)} ${m.away_team}</div>
     </div>
-    ${ko?blocoExtra(m,p,lock):''}
+    ${ko && !m.late_window ? blocoExtra(m,p,lock) : ''}
     ${hasRes?linhaPontos(m,p):''}
   </div>`;
 }
@@ -636,7 +645,7 @@ function tabRegras(){
 
 /* ===== ADMIN ===== */
 function renderAdmin(){
-  const dir=`<span>@${S.me.username}</span> <span class="badge-mod">admin</span>`;
+  const dir=`<span>@${S.me.username}</span> <span class="badge-mod">admin</span> <button class="secondary" style="padding:7px 12px;font-size:13px" onclick="App.setAdminView(false)">⚽ Jogar / ver bolão</button>`;
   const tabs=[['resultados','Resultados'],['pontuacao','Pontuação'],['validar','Validar'],['gabarito','Gabarito'],['usuarios','Usuários'],['criar','Criar jogo'],['regras','Regras']]
     .map(([t,n])=>`<button class="${S.atab===t?'on':''}" onclick="App.setATab('${t}')">${n}</button>`).join('');
   let body;
@@ -663,8 +672,12 @@ function admResultados(){
     let extra='';
     if(empateKO){
       const b=(fn,val,lbl,sel)=>`<button class="${sel?'':'secondary'}" style="padding:5px 10px;font-size:12px" onclick="App.${fn}(${m.id},'${(''+val).replace(/'/g,"\\'")}')">${lbl}</button>`;
-      extra=`<div class="win-sel">Prorrogação: ${b('setET',m.home_team,m.home_team,m.et_outcome===m.home_team)}${b('setET','Empate','Empate (foi pra pênaltis)',m.et_outcome==='Empate')}${b('setET',m.away_team,m.away_team,m.et_outcome===m.away_team)}</div>`;
-      if(m.et_outcome==='Empate') extra+=`<div class="win-sel">Pênaltis: ${b('setPen',m.home_team,m.home_team,m.pen_winner===m.home_team)}${b('setPen',m.away_team,m.away_team,m.pen_winner===m.away_team)}</div>`;
+      if(m.late_window){
+        extra=`<div class="win-sel">Quem avançou? ${b('setWinner',m.home_team,m.home_team,m.winner_team===m.home_team)}${b('setWinner',m.away_team,m.away_team,m.winner_team===m.away_team)}</div>`;
+      } else {
+        extra=`<div class="win-sel">Prorrogação: ${b('setET',m.home_team,m.home_team,m.et_outcome===m.home_team)}${b('setET','Empate','Empate (foi pra pênaltis)',m.et_outcome==='Empate')}${b('setET',m.away_team,m.away_team,m.et_outcome===m.away_team)}</div>`;
+        if(m.et_outcome==='Empate') extra+=`<div class="win-sel">Pênaltis: ${b('setPen',m.home_team,m.home_team,m.pen_winner===m.home_team)}${b('setPen',m.away_team,m.away_team,m.pen_winner===m.away_team)}</div>`;
+      }
     }
     h+=(show?`<div class="dia-sep">${dk}</div>`:'')+`<div class="jogo" data-card="${m.id}">
       <div class="jogo-topo"><div class="jogo-meta"><span class="grp-tag">${m.group_name?'Grupo '+m.group_name:m.stage}</span> ${dk} · ${fmtHora(m.kickoff_at)}h</div></div>
